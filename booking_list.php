@@ -53,7 +53,7 @@ $bookings_result = $conn->query($bookings_query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bookings</title>
-    <link rel="stylesheet" href="css/booking.css">
+    <link rel="stylesheet" href="css/bookings.css">
 </head>
 <body>
 
@@ -91,7 +91,7 @@ $bookings_result = $conn->query($bookings_query);
                         <td><?php echo $row['tour_name']; ?></td>
                         <td><?php echo $row['booking_date']; ?></td>
                         <td><?php echo $row['payment_status']; ?></td>
-                        <td><?php echo $currency_symbol.number_format($row['total_amount'], 2); ?></td>
+                        
                     </tr>
                 <?php } ?>
             </tbody>
