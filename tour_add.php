@@ -4,8 +4,6 @@ session_start();
 $message = "";
 $tour_type = isset($_POST['tour_type']) ? $_POST['tour_type'] : 0; // Default to 0 (Regular Tour) if not set
 
-
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     echo "Tour Type: " . $_POST['tour_type'] . "<br>";
     $tour_name = $_POST['tour_name'];
@@ -14,7 +12,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $end_date = $_POST['end_date'];
     $price_per_person = $_POST['price_per_person'];
     $location = $_POST['location'];
-    $max_bookings = $_POST['max_bookings']; // Get max_bookings from the form
+    $max_bookings = $_POST['max_bookings'];
+
+    // Handle min_bookings
+    $min_bookings = NULL; // Default to NULL
+if ($tour_type == 1) { // If Exclusive Tour
+    $min_bookings = isset($_POST['min_bookings']) && is_numeric($_POST['min_bookings']) ? $_POST['min_bookings'] : NULL;
+}
 
     // Handle Image Upload as BLOB
     if (isset($_FILES['tour_image']) && $_FILES['tour_image']['error'] == 0) {
@@ -24,21 +28,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Get Tour Guide details
         $guide_names = $_POST['guide_name']; // Array of guide names
         $guide_contact_nos = $_POST['guide_contact_no']; // Array of guide contact numbers
-        $query = "INSERT INTO tour (tour_name, description, start_date, end_date, price_per_person, location, max_bookings, is_exclusive, image_path) 
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-$stmt = $conn->prepare($query);
 
-// Bind the parameters, adding is_exclusive
-$is_exclusive = ($tour_type == 1) ? 1 : 0; // If 'Exclusive Tour' is selected, set 1, otherwise 0
-$stmt->bind_param("ssssdssss", $tour_name, $description, $start_date, $end_date, $price_per_person, $location, $max_bookings, $is_exclusive, $image_data);
+        // Insert tour into database
+        $query = "INSERT INTO tour (tour_name, description, start_date, end_date, price_per_person, location, max_bookings, is_exclusive, image_path, min_bookings) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($query);
 
-        $query = "INSERT INTO tour (tour_name, description, start_date, end_date, price_per_person, location, max_bookings, image_path, is_exclusive) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-$stmt = $conn->prepare($query);
-$stmt->bind_param("ssssdsssi", $tour_name, $description, $start_date, $end_date, $price_per_person, $location, $max_bookings, $image_data, $tour_type);
+        // Bind the parameters
+        $is_exclusive = ($tour_type == 1) ? 1 : 0; // If 'Exclusive Tour' is selected, set 1, otherwise 0
+        $stmt->bind_param(
+            "ssssdssssi",
+            $tour_name,
+            $description,
+            $start_date,
+            $end_date,
+            $price_per_person,
+            $location,
+            $max_bookings,
+            $is_exclusive,
+            $image_data,
+            $min_bookings
+        );
 
-// Debug: Check the query before execution
-echo $stmt->error . "<br>"; // Debugging line
+        // Debugging line to check errors
+        if (!$stmt) {
+            echo "Prepare Error: " . $conn->error . "<br>";
+        }
 
         if ($stmt->execute()) {
             $tour_id = $conn->insert_id; // Get the newly inserted tour ID
@@ -69,9 +84,10 @@ echo $stmt->error . "<br>"; // Debugging line
         } else {
             $message = "Error adding tour: " . $stmt->error;
         }
+
         $stmt->close();
-        $stmt_guide->close();
-        $stmt_assign->close();
+        if (isset($stmt_guide)) $stmt_guide->close();
+        if (isset($stmt_assign)) $stmt_assign->close();
     } else {
         $message = "Please upload a valid image.";
     }
@@ -79,6 +95,8 @@ echo $stmt->error . "<br>"; // Debugging line
 
 $conn->close();
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -157,21 +175,21 @@ $conn->close();
     </div>
         <!-- Exclusive Fields (Only show when Exclusive Tour is selected) -->
         <div id="exclusiveFields" style="display: none;">
-            <div class="form-group">
-                <label for="min_customers">Minimum Customers (Admin sets for exclusive tours):</label>
-                <input type="number" name="min_customers" id="min_customers" required>
-            </div>
+    <div class="form-group">
+        <label for="min_bookings">Minimum Bookings (Admin sets for exclusive tours):</label>
+        <input type="number" name="min_bookings" id="min_bookings">
+    </div>
 
-            <div class="form-group">
-                <label for="exclusive_start_date">Exclusive Start Date:</label>
-                <input type="date" name="exclusive_start_date" id="exclusive_start_date">
-            </div>
+    <div class="form-group">
+        <label for="exclusive_start_date">Exclusive Start Date:</label>
+        <input type="date" name="exclusive_start_date" id="exclusive_start_date">
+    </div>
 
-            <div class="form-group">
-                <label for="exclusive_end_date">Exclusive End Date:</label>
-                <input type="date" name="exclusive_end_date" id="exclusive_end_date">
-            </div>
-        </div>
+    <div class="form-group">
+        <label for="exclusive_end_date">Exclusive End Date:</label>
+        <input type="date" name="exclusive_end_date" id="exclusive_end_date">
+    </div>
+</div>
 
         <!-- Regular Tour Date Fields (Always visible) -->
         <div class="form-group">
@@ -205,24 +223,25 @@ $conn->close();
 <script>
     // Show or hide exclusive fields based on tour type selection
     function toggleExclusiveFields() {
-        const tourType = document.getElementById("tour_type").value;
-        const exclusiveFields = document.getElementById("exclusiveFields");
-        const startDateInput = document.getElementById("start_date");
-        const endDateInput = document.getElementById("end_date");
+    const tourType = document.getElementById("tour_type").value;
+    const exclusiveFields = document.getElementById("exclusiveFields");
+    const startDateInput = document.getElementById("start_date");
+    const endDateInput = document.getElementById("end_date");
+    const minBookingsInput = document.getElementById("min_bookings"); // Get the min_bookings field
 
-        // If 'Exclusive Tour' is selected
-        if (tourType == "1") {
-            exclusiveFields.style.display = "block";  // Show exclusive fields
-            // Make the regular dates optional for exclusive tours
-            startDateInput.required = false;
-            endDateInput.required = false;
-        } else {
-            exclusiveFields.style.display = "none";   // Hide exclusive fields
-            // Make regular dates required for regular tours
-            startDateInput.required = true;
-            endDateInput.required = true;
-        }
+    // If 'Exclusive Tour' is selected
+    if (tourType == "1") {
+        exclusiveFields.style.display = "block";  // Show exclusive fields
+        // Make the regular dates optional for exclusive tours
+        startDateInput.required = false;
+        endDateInput.required = false;
+    } else {
+        exclusiveFields.style.display = "none";   // Hide exclusive fields
+        // Make regular dates required for regular tours
+        startDateInput.required = true;
+        endDateInput.required = true;
     }
+}
 
     // Trigger the exclusive fields visibility on page load, based on the default selection
     window.onload = function() {
@@ -268,7 +287,7 @@ $conn->close();
                 </div>
 
                 <div class="guide-field">
-                    <label for="guide_contact_no[]">Guide Contact Number:</label>
+              <label for="guide_contact_no[]">Guide Contact Number:</label>
                     <input type="text" name="guide_contact_no[]">
                 </div>
             </div>
