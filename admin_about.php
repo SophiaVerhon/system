@@ -22,13 +22,13 @@ session_start();
   </div>
   <nav class="TOURheader-navHP">
                 
-                <a href="admin_home.php"class="TOURnav-linkHP">Home</a>
-                <a href="admin_tour.php"class="TOURnav-linkHP">Tours</a>
-                <a href="admin_about.php"class="TOURnav-linkHP">About Us</a>
-                <a href="review.php"class="TOURnav-linkHP">Review</a>
-                <a href="tour_add.php"class="TOURnav-linkHP">+ Add New Tour</a>
-                <a href="admin_dashboard.php"class="TOURnav-linkHP">Dashboard</a>
-                <div class="TOURnav-linkHP"><a href="logout.php" class="logout-button">Logout</a></div>
+                <a href="admin_home.php"class="TOURnav-linkHP">HOME</a>
+                <a href="admin_tour.php"class="TOURnav-linkHP">TOURS</a>
+                <a href="admin_about.php"class="TOURnav-linkHP">ABOUT US</a>
+                <a href="review.php"class="TOURnav-linkHP">REVIEW</a>
+                <a href="tour_add.php"class="TOURnav-linkHP">+ ADD NEW TOUR</a>
+                <a href="admin_dashboard.php"class="TOURnav-linkHP">DASHBOARD</a>
+                <div class="TOURnav-linkHP"><a href="logout.php" class="logout-button">LOGOUT</a></div>
 </div>
                
       </div>
@@ -82,7 +82,7 @@ session_start();
                 </div>
                 <div class="TOURfooterNav">
                     <ul>
-                        <li><a href="hompage.php">Home</a></li>
+                        <li><a href="admin_home.php">Home</a></li>
                         <li><a href="">About Us</a></li>
                         <li><a href="">Contact</a></li>
                     </ul>
@@ -94,32 +94,7 @@ session_start();
             </div>
         </footer>
 
-<!-- JavaScript for dropdown -->
-<script>
-    function toggleDropdown(menuId) {
-    const dropdown = document.getElementById(menuId);
-    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    }
 
-// Close dropdown if clicked outside
-    window.onclick = function (event) {
-        if (!event.target.matches('.dropdown-toggle')) {
-            const dropdowns = document.querySelectorAll('.dropdown-menu');
-            dropdowns.forEach(dropdown => {
-            dropdown.style.display = 'none';
-            });
-            }
-        }
-
-  function editAccount() {
-    window.location.href = 'edit-account.php';
-  }
-
-  function deleteAccount() {
-    if (confirm('Are you sure you want to delete your account?')) {
-      window.location.href = 'delete-account.php';
-    }
-  }
 </script>
 </body>
 </html>
