@@ -15,13 +15,12 @@ if (!isset($_GET['tour_id'])) {
 $tour_id = $_GET['tour_id'];
 
 // Fetch the tour details including exclusive flag, min_bookings, max_bookings
-$tour_query = "SELECT tour_name, max_bookings, min_bookings, is_exclusive FROM tour WHERE tour_id = ?";
-
+$tour_query = "SELECT tour_name, max_bookings, min_bookings, is_exclusive, start_date, end_date FROM tour WHERE tour_id = ?";
 $stmt_tour = $conn->prepare($tour_query);
 $stmt_tour->bind_param("i", $tour_id);
 $stmt_tour->execute();
 $stmt_tour->store_result();
-$stmt_tour->bind_result($tour_name, $max_bookings, $min_bookings, $isExclusive);
+$stmt_tour->bind_result($tour_name, $max_bookings, $min_bookings, $isExclusive, $start_date, $end_date);
 $stmt_tour->fetch();
 $stmt_tour->close();
 
@@ -49,7 +48,6 @@ if ($max_bookings > 0 && $current_booking_count >= $max_bookings) {
     exit();
 }
 
-// If max_bookings is NULL or 0, proceed with open bookings
 if ($max_bookings !== NULL && $max_bookings > 0) {
     // If there are max bookings set, calculate available slots based on the current booking count
     $availableSlots = max(0, $max_bookings - 1 - $current_booking_count);
@@ -57,8 +55,6 @@ if ($max_bookings !== NULL && $max_bookings > 0) {
     // If no max bookings, set available slots to a large number or "unlimited"
     $availableSlots = PHP_INT_MAX; // This means unlimited slots are available
 }
-
-
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $conn->begin_transaction();
@@ -69,7 +65,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $phone = $_POST['phone_no'];
         $age = $_POST['age'];
         $address = $_POST['address'];
+        $num_people = $_POST['num_people'];  // This is where you get the number of people
         $valid_id_path = null;
+
+        // Debugging output
+        echo "Number of people: $num_people<br>";  // Debugging line
+        echo "Exclusive tour flag: $isExclusive<br>";  // Debugging line
+        echo "Minimum bookings required: $min_bookings<br>";  // Debugging line
+
+        // Adjust number of adventurers for exclusive tours
+        $isExclusive = $_POST['is_exclusive'];
+        $num_people_adjusted = $num_people - 1;
+
+        if ($isExclusive && $num_people_adjusted < $min_bookings) {
+            // If the adjusted number of adventurers is less than the minimum required
+            $message = "You must have at least $min_bookings adventurers to book this exclusive tour.";
+            echo "<script>alert('$message');</script>";
+            return;  // Stop further processing if the condition isn't met
+        }
 
         // Handle file upload for the main customer (LONGBLOB storage)
         if (isset($_FILES['valid_id_path']) && $_FILES['valid_id_path']['error'] === UPLOAD_ERR_OK) {
@@ -86,17 +99,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($stmt_customer->execute()) {
             $customer_id = $stmt_customer->insert_id;
 
-            // Insert booking for the main customer
-            $booking_query = "INSERT INTO booking (customer_id, tour_id, user_id, booking_date) VALUES (?, ?, ?, NOW())";
-            $stmt_booking = $conn->prepare($booking_query);
-            $stmt_booking->bind_param("iii", $customer_id, $tour_id, $user_id);
+            // If this is an exclusive tour, insert the exclusive tour first
+            if ($isExclusive) {
+                // Validate start_date and end_date
+                if (!empty($_POST['start_date']) && !empty($_POST['end_date'])) {
+                    $start_date = $_POST['start_date']; // Format should be 'YYYY-MM-DD'
+                    $end_date = $_POST['end_date'];     // Format should be 'YYYY-MM-DD'
 
-            if (!$stmt_booking->execute()) {
-                throw new Exception("Error adding booking for main customer.");
+                    // Debugging output for start and end date
+                    echo "Start Date: $start_date<br>";
+                    echo "End Date: $end_date<br>";
+
+                    // Insert the exclusive tour details into the tour table
+                    $exclusive_tour_insert_query = "INSERT INTO tour (tour_name, start_date, end_date, is_exclusive) VALUES (?, ?, ?, 1)";
+                    $stmt_exclusive_tour = $conn->prepare($exclusive_tour_insert_query);
+                    $stmt_exclusive_tour->bind_param("sss", $tour_name, $start_date, $end_date);
+
+                    if (!$stmt_exclusive_tour->execute()) {
+                        throw new Exception("Error inserting new exclusive tour. " . $stmt_exclusive_tour->error);
+                    }
+
+                    // Fetch the new tour ID for the exclusive tour
+                    $new_tour_id = $stmt_exclusive_tour->insert_id;
+                    echo "New Tour ID: $new_tour_id<br>";
+                } else {
+                    $message = "Start date and end date must be provided for exclusive tours.";
+                    echo "<script>alert('$message');</script>";
+                    return;  // Stop further processing if the dates are not provided
+                }
+            } else {
+                // If not an exclusive tour, use the original tour_id
+                $new_tour_id = $tour_id;
             }
 
-            // Update the current booking count after adding the main customer
-            $current_booking_count++;
+            // Insert booking for the selected tour (exclusive or not)
+            $booking_query = "INSERT INTO booking (customer_id, tour_id, user_id, booking_date) VALUES (?, ?, ?, NOW())";
+            $stmt_booking = $conn->prepare($booking_query);
+            $stmt_booking->bind_param("iii", $customer_id, $new_tour_id, $user_id);
+
+            if (!$stmt_booking->execute()) {
+                throw new Exception("Error adding booking for the tour.");
+            }
+
+
             // Collect payment details if provided
             if (isset($_POST['ref_number']) && !empty($_POST['ref_number'])) {
                 $reference_no = $_POST['ref_number'];
@@ -118,19 +163,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             $notification_message = "New Booking: $name has booked for $tour_name.";
-            $notification_query = "INSERT INTO notifications (message) VALUES (?)";
+
+            // Include the $tour_id in the insert query
+            $notification_query = "INSERT INTO notifications (message, tour_id) VALUES (?, ?)";
             $stmt_notification = $conn->prepare($notification_query);
-            $stmt_notification->bind_param("s", $notification_message);
+            $stmt_notification->bind_param("si", $notification_message, $tour_id);
             $stmt_notification->execute();
 
             // Handle additional adventurers
-           // Handling adventurers' bookings
-                if (isset($_POST['adventurer_name']) && is_array($_POST['adventurer_name'])) {
-                    for ($i = 0; $i < count($_POST['adventurer_name']); $i++) {
-                        // Check if adding this adventurer exceeds the max booking limit
-                        if ($totalAdventurers + 1 > $availableSlots) {  // +1 for the main customer
-                            throw new Exception("You cannot add more adventurers than available slots.");
-                        }
+            if (isset($_POST['adventurer_name']) && is_array($_POST['adventurer_name'])) {
+                for ($i = 0; $i < count($_POST['adventurer_name']); $i++) {
+                    // Check if adding this adventurer exceeds the max booking limit
+                    if ($totalAdventurers + 1 > $availableSlots) {  // +1 for the main customer
+                        throw new Exception("You cannot add more adventurers than available slots.");
+                    }
 
                     $additional_name = $_POST['adventurer_name'][$i];
                     $additional_email = $_POST['adventurer_emails'][$i];
@@ -166,8 +212,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     }
 
                     $notification_message = "New Booking: $additional_name has booked for $tour_name.";
+
+                    // Include the $tour_id in the insert query
+                    $notification_query = "INSERT INTO notifications (message, tour_id) VALUES (?, ?)";
                     $stmt_notification = $conn->prepare($notification_query);
-                    $stmt_notification->bind_param("s", $notification_message);
+                    $stmt_notification->bind_param("si", $notification_message, $tour_id);
                     $stmt_notification->execute();
                 }
             }
@@ -182,11 +231,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $conn->rollback();
         $message = $e->getMessage();
     }
-    echo "<script>var minBookings = $min_bookings; var availableSlots = $availableSlots;</script>";
+    echo "<script>var minBookings = $min_bookings;</script>";
+    $num_adventurers = ($isExclusive && $min_bookings > 0) ? $min_bookings : 0; // Default to min_bookings for exclusive tours
+    $availableSlots = $max_bookings - 1;
 }
 
 $conn->close();
 ?>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const isExclusive = <?php echo $isExclusive ? 'true' : 'false'; ?>;
+        const exclusiveDatesDiv = document.getElementById('exclusiveDates');
+        if (isExclusive) {
+            exclusiveDatesDiv.style.display = 'block';
+        }
+    });
+</script>
 
 
 
@@ -262,6 +324,7 @@ $conn->close();
                         <input type="file" id="valid_id_path" name="valid_id_path" required>
                     </div>
                 </div>
+                <div id="date-fields"></div>
 
                 <h2>Adventurers</h2>
                 <div class="input-row">
@@ -287,8 +350,8 @@ $conn->close();
     </div>
 
     <div class="inputbox">
-        <label for="payment_upload">Upload Payment Proof (Optional)</label>
-        <input type="file" id="payment_upload" name="payment_upload" accept="image/*">
+        <label for="payment_upload">Upload Payment Proof (Required)</label>
+        <input type="file" id="payment_upload" name="payment_upload" accept="image/*"required>
     </div>
 
     <div class="inputbox">
@@ -311,11 +374,12 @@ $conn->close();
         </div>
     </div>
 </section>
+
 <script>
-// Set the default number of adventurers based on the min_bookings value (fetched from PHP)
-// For exclusive tours, this will be min_bookings - 1, otherwise, it will be based on the number set in the database
+// Fetch the dynamic values from PHP
 let numAdventurers = <?php echo $num_adventurers; ?>; // This value is dynamically fetched from the database
 let availableSlots = <?php echo $availableSlots; ?>;
+let isExclusive = <?php echo $isExclusive; ?>; // Exclusive tour flag
 
 // Set the value of the num_people input field to the default number of adventurers
 document.getElementById('num_people').value = numAdventurers; 
@@ -357,15 +421,38 @@ for (let i = 0; i < numAdventurers; i++) {
         </div>`;
 }
 
+// Dynamically show start and end dates if the tour is exclusive
+if (isExclusive) {
+    let dateFields = document.getElementById('date-fields');
+    dateFields.innerHTML = `
+        <h3>Tour Dates (Exclusive Tour)</h3>
+        <div class="input-row">
+            <div class="inputbox">
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date" required>
+            </div>
+            <div class="inputbox">
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date" required>
+            </div>
+        </div>`;
+}
+
 // Update the adventurer fields dynamically when the num_people input changes
 document.getElementById('num_people').addEventListener('input', function() {
-    let numPeople = this.value;
+    let numPeople = this.value; // Get the number of people from the input field
     adventurerFields.innerHTML = ''; // Clear previous fields
 
     // Check if the number of people exceeds the available slots
     if (numPeople > availableSlots) {
         alert("You cannot add more adventurers than available slots!");
         return; // Stop adding fields if the max bookings are exceeded
+    }
+
+    // Check if the number of people is less than the min_bookings for exclusive tours
+    if (numPeople < <?php echo ($isExclusive && $min_bookings > 0) ? $min_bookings : 0; ?>) {
+        alert("You must have at least <?php echo $min_bookings; ?> adventurers for this exclusive tour.");
+        return; // Prevent updating the fields if the number is less than min_bookings
     }
 
     // Add the adventurer fields dynamically based on the updated number of people
@@ -403,10 +490,10 @@ document.getElementById('num_people').addEventListener('input', function() {
                 </div>
             </div>`;
     }
+
+    // Update the hidden input for the number of adventurers (if needed)
+    document.getElementById('num_people').value = numPeople; // Ensure the hidden field reflects the number of adventurers
 });
 </script>
-
-
-
 </body>
 </html>

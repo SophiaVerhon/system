@@ -27,6 +27,7 @@ $notifications_query = "
         notifications.message, 
         notifications.created_at, 
         notifications.is_read, 
+        notifications.tour_id,  /* Ensure tour_id is included */
         IFNULL(tour.tour_name, 'No tour name') AS tour_name
     FROM 
         notifications 
@@ -44,7 +45,7 @@ $result = $conn->query($notifications_query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Notifications</title>
-    <link rel="stylesheet" href="css/admindashb.css">
+    <link rel="stylesheet" href="css/notifications.css">
 </head>
 <body class="admin">
     <div class="main-container">
@@ -54,7 +55,6 @@ $result = $conn->query($notifications_query);
                 <span class="header-text">Higanteng Laagan Travel & Tours</span>
             </div>
             <nav class="header-navHP">
-                <a href="admin_home.php" class="nav-linkHP">HOME </a>
                 <a href="admin_tour.php" class="nav-linkHP">TOURS</a>
                 <a href="tour_add.php" class="nav-linkHP">+ADD NEW TOURS</a>
                 <a href="admin_about.php" class="nav-linkHP">ABOUT US</a>
@@ -64,29 +64,33 @@ $result = $conn->query($notifications_query);
                 <!-- Notifications Badge in Navbar -->
             </nav>
         </header>
-<div class="container">
-    <h2>Notifications</h2>
-    <a href="admin_notifications.php?mark_all_read=true" class="mark-read-btn">Mark All as Read</a>
-    <?php if ($result && $result->num_rows > 0): ?>
-        <ul>
-            <?php while ($notification = $result->fetch_assoc()): ?>
-                <li class="<?php echo $notification['is_read'] ? 'read' : 'unread'; ?>">
-                    <?php 
-                        // Replace {tour_name} in the message with the actual tour name
-                        $message = $notification['message'];
-                        if (strpos($message, '{tour_name}') !== false && !empty($notification['tour_name'])) {
-                            $message = str_replace('{tour_name}', $notification['tour_name'], $message);
-                        }
-                        echo htmlspecialchars($message); 
-                    ?>
-                    <span class="timestamp"><?php echo $notification['created_at']; ?></span>
-                </li>
-            <?php endwhile; ?>
-        </ul>
-    <?php else: ?>
-        <p>No notifications at the moment.</p>
-    <?php endif; ?>
-</div>
+        <div class="container">
+            <h2>Notifications</h2>
+            <a href="admin_notifications.php?mark_all_read=true" class="mark-read-btn">Mark All as Read</a>
+            <?php if ($result && $result->num_rows > 0): ?>
+                <ul>
+    <?php while ($notification = $result->fetch_assoc()): ?>
+        <li class="notification <?php echo $notification['is_read'] ? 'read' : 'unread'; ?>">
+            <!-- The link now directs to view_bookings.php instead of tour_details.php -->
+            <a href="view_bookings.php?tour_id=<?php echo $notification['tour_id']; ?>">
+                <?php 
+                    // Construct the notification message with the actual tour name
+                    $message = $notification['message'];
+                    if (strpos($message, '{tour_name}') !== false && !empty($notification['tour_name'])) {
+                        $message = str_replace('{tour_name}', $notification['tour_name'], $message);
+                    }
+                    echo htmlspecialchars($message); 
+                ?>
+                <span class="timestamp"><?php echo $notification['created_at']; ?></span>
+            </a>
+        </li>
+    <?php endwhile; ?>
+</ul>
 
+            <?php else: ?>
+                <p>No notifications at the moment.</p>
+            <?php endif; ?>
+        </div>
+    </div>
 </body>
 </html>
