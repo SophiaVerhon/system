@@ -1,0 +1,405 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Buttons */
+.BKSTATUSbutton-container {
+    display: flex;
+    margin-top: 150px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.BKSTATUSbutton {
+    margin-top: 110px;
+    padding: 10px 20px;
+    font-size: 30px;
+    background-color: #ffffff; /* Default background: white */
+    color: rgb(0, 0, 0); /* Default text color: black */
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for both background and text */
+    width: 100%;
+    height: 100px;
+}
+
+.BKSTATUSbutton:hover {
+    background-color: #EE5023 !important; /* Orange background on hover */
+    color: #ffffff !important; /* White text on hover */
+}
+
+
+/* Status Container */
+.BKSTATUSstatus-container {
+    height: calc(100vh - 200px); /* Full height minus header and footer */
+    background-color: #e6e6e6;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    width: 90%;
+    border-radius: 5px;
+    overflow-y: auto;
+    padding: 20px;
+    margin-top: 20px;
+}/* Main heading */
+/* Main heading */
+.h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Container for booking list */
+.container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #f4f4f4;  /* Gray background for the entire container */
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Mark All as Read button */
+.mark-read-btn {
+    display: inline-block;
+    margin-bottom: 30px;
+    padding: 10px 10px;
+    background-color: #27ae60;
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 16px;
+    text-align: center;
+    display: block;
+    margin-left: auto;  /* Center the button horizontally */
+    margin-right: auto;
+}
+
+.mark-read-btn:hover {
+    background-color: #2ecc71;
+}
+
+/* Styles for the booking list */
+ul.booking-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;  /* Align the notifications to the left */
+    gap: 15px;  /* Adds space between list items */
+}
+
+/* Booking item style */
+.booking-item {
+    background-color: #e0e0e0;  /* Gray background for each booking item */
+    padding: 20px 25px;  /* Reduced padding for smaller cards */
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;  /* Use full width of the container */
+    max-width: 700px;
+    font-size: 16px;
+}
+
+/* Notification arrow style */
+.booking-item .notification-arrow {
+    font-size: 18px;
+    color: #007bff;
+}
+
+/* Styles for links inside booking items */
+.booking-item a {
+    display: block;
+    color: #007BFF;
+    text-decoration: none;
+    padding: 10px;
+    background-color: #f4f4f4;
+    border-radius: 5px;
+}
+
+.booking-item a:hover {
+    text-decoration: underline;
+    background-color: #eef7ff;
+}
+
+/* Read/Unread notification styles */
+.booking-item.read {
+    background-color: #dcdcdc;  /* Lighter gray for read notifications */
+    color: #7f8c8d;
+}
+
+.booking-item.unread {
+    background-color: #bdbdbd;  /* Darker gray for unread notifications */
+    color: #2c3e50;
+}
+
+/* Timestamp style for booking dates */
+.timestamp {
+    font-size: 12px;
+    color: #95a5a6;
+    font-style: italic;
+}
+
+.booking-item a:focus {
+    outline: none;
+}
+
+.notification a {
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.TOURmain-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    padding: 20px 20px; 
+    background-color: #1E5F2D;
+    color: white;
+    height: 130px;
+    position: fixed;
+    top: 0; 
+    width: 100%; 
+    z-index: 1000;
+    box-shadow: 0px 25px 20px rgba(0, 0, 0, 0.3); 
+}
+
+.TOURheader-logo-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 10px;
+}
+
+.TOURheader-text {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.TOURlogo-image {
+    margin-top: 5px; 
+    margin-bottom: 0;
+    width: 60px;
+    height: 60px;
+}
+
+.TOURheader-navHP {
+    display: flex;
+    gap: 30px; 
+    margin-top: 50px;
+    align-items: center;
+}
+
+.TOURnav-linkHP {
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 10px 15px;
+    font-size: 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.TOURnav-linkHP:hover,
+.TOURnav-linkHP:active {
+    background-color: #EE5023;
+    color: white;
+}
+
+.TOURdropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.TOURdropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    background-color: #1E5F2D;
+    color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 1000;
+    padding: 10px 0;
+    min-width: 200px;
+}
+
+.TOURdropdown-menu.show {
+    display: block;
+}
+
+.TOURdropdown-item {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.TOURdropdown-item:hover {
+    background-color: #1E5F2D;
+    color: #ffffff;
+}
+
+.TOURheader-nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.TOURnav-link.dropdown {
+    cursor: pointer;
+}
+
+.TOURdropdown-menu a {
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+}
+
+.TOURdropdown-menu a:hover {
+    background-color: #154a21;
+}
+
+.TOURdropdown:hover .dropdown-menu {
+    display: block; 
+}
+
+.TOURdropdown-toggle {
+    font-weight: bold;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+
+
+.TOURfooter{
+    background-color: #1E5F2D;
+}
+.TOURfooterContainer{
+    width: 100%;
+    padding: 70px 30px 20px ;
+    background-color: #1E5F2D;
+}
+.TOURsocialIcons{
+    display: flex;
+    justify-content: center;
+}
+.TOURsocialIcons a{
+    text-decoration: none;
+    padding:  10px;
+    background-color: rgb(255, 255, 255);
+    margin: 10px;
+    border-radius: 100%;
+}
+.TOURsocialIcons a i{
+    font-size: 2em;
+    color: #1E5F2D;
+    opacity: 1;
+}
+
+.TOURsocialIcons a:hover{
+    background-color: #ff3700;
+    transition: 0.5s;
+}
+.TOURsocialIcons a:hover i{
+    color: #ff3700;
+    transition: 0.5s;
+}
+.TOURfooterNav{
+    margin: 30px 0;
+}
+.TOURfooterNav ul{
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+}
+.TOURfooterNav ul li a{
+    color: #ffffff;
+    margin: 20px;
+    text-decoration: none;
+    font-size: 1.3em;
+    opacity: 1;
+    transition: 0.5s;
+}
+.TOURfooterNav ul li a:hover{
+    opacity: 1;
+    color: #ff3700;
+}
+.TOURfooterBottom{
+    background-color: #1E5F2D;
+    padding: 20px;
+    text-align: center;
+}
+.TOURfooterBottom p{
+    color: rgb(255, 255, 255);
+}
+.TOURdesigner{
+    opacity: 1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 400;
+    font-size: 20px;
+    color: #ffffff;
+    margin: 0px 5px;
+}
+
+
+@media (max-width: 480px) {
+    .TOURheader-text {
+        font-size: 15px; 
+    }
+    .TOURheader-navHP {
+        gap: 15px; /* Adjust spacing between navigation links */
+    }
+    .TOURnav-linkHP {
+        font-size: 13px; /* Smaller font size for nav links */
+    }
+}

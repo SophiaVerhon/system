@@ -57,7 +57,7 @@ if ($result && $result->num_rows > 0) {
                 <span class="header-text">Higanteng Laagan Travel & Tours</span>
             </div>
             <nav class="header-navHP">
-                <a href="#" class="nav-linkHP">LANDING PAGE</a>
+                <a href="#" class="nav-linkHP">HOME</a>
                 <a href="#popular" class="nav-linkHP">TOURS</a>
                 <a href="#about" class="nav-linkHP">ABOUT US</a>
                 <a href="#review" class="nav-linkHP">REVIEWS</a>
@@ -72,7 +72,7 @@ if ($result && $result->num_rows > 0) {
         <section id="popular" class="tours-section2">
     <div class="section-header">
         <div class="left-header">
-            <p class="section-title">RECENT SUCCESSFUL TOURS</p>
+            <p class="section-title">SUCCESSFUL TOURS</p>
         </div>
     </div>
     <div class="scroll-container">
@@ -92,7 +92,7 @@ if ($result && $result->num_rows > 0) {
                         <p class="tour-title2"><?php echo htmlspecialchars($tour['tour_name']); ?></p>
                         <p><?php echo $currency_symbol . htmlspecialchars($tour['price_per_person']); ?> per person</p>
                     </div>
-                    <a href="../customer_form.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>" class="tour-button">Book Now</a>
+                    
                 </div>
             <?php endforeach; ?>
         <?php else: ?>
@@ -106,6 +106,7 @@ if ($result && $result->num_rows > 0) {
         <div class="left-header">
             <p class="section-title">MOST POPULAR TOURS</p>
         </div>
+        <a href="homepage.php" class="see-more">See More</a>
     </div>
     <div class="scroll-container">
         <?php if (!empty($popular_tours)): ?>

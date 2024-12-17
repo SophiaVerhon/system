@@ -1,106 +1,133 @@
 <?php
-session_start();
-include('../db_connect.php'); // Database connection
+include('../db_connect.php'); // Include database connection
 
-// Ensure user is logged in
+session_start();
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");  // Redirect to login if not logged in
+    header("Location:login.php");
     exit();
 }
-$user_id = $_SESSION['user_id']; // Get the logged-in user ID
 
-// Fetch current bookings (status = 'current')
-$current_query = "
-    SELECT b.booking_id, t.tour_name, b.booking_date
-    FROM booking b
-    JOIN tour t ON b.tour_id = t.tour_id
-    WHERE b.customer_id = ? AND b.status = 'current'
-";
-$stmt_current = $conn->prepare($current_query);
-$stmt_current->bind_param("i", $user_id); // Bind the user_id or customer_id
-$stmt_current->execute();
-$current_result = $stmt_current->get_result();
+$user_id = $_SESSION['user_id'];
 
-// Fetch completed bookings (status = 'completed')
-$completed_query = "
-    SELECT b.booking_id, t.tour_name, b.booking_date
-    FROM booking b
-    JOIN tour t ON b.tour_id = t.tour_id
-    WHERE b.customer_id = ? AND b.status = 'completed'
-";
-$stmt_completed = $conn->prepare($completed_query);
-$stmt_completed->bind_param("i", $user_id); // Bind the user_id or customer_id
-$stmt_completed->execute();
-$completed_result = $stmt_completed->get_result();
+// Fetch booking details
+$query = "SELECT b.booking_id, t.tour_name, b.booking_date
+          FROM booking b
+          JOIN customer c ON b.customer_id = c.customer_id
+          JOIN tour t ON b.tour_id = t.tour_id
+          WHERE c.user_id = ?";
+
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $bookings = $result->fetch_all(MYSQLI_ASSOC);
+} else {
+    $bookings = [];
+}
+
+$stmt->close();
+$conn->close();
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="bookstatus.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Booking Status</title>
-    <link rel="stylesheet" href="bookingstatus.css">
 </head>
+
 <body>
-    <header>
-        <h1>Booking Status</h1>
-        <nav>
-            <a href="home.php">Go Back to Homepage</a>
-            <a href="profile.php">My Profile</a>
-            <a href="index.php">Log Out</a>
+    <header class="TOURmain-header">
+        <div class="TOURheader-logo-text">
+            <img src="image/logo.png" alt="Logo" class="TOURlogo-image">
+            <span class="TOURheader-text">Higanteng Laagan Travel & Tours</span>
+        </div>
+        <nav class="TOURheader-navHP">
+            <a href="home.php" class="TOURnav-linkHP">GO BACK TO HOMEPAGE</a>
+            <div class="TOURdropdown">
+                <span class="TOURnav-linkHP dropdown-toggle" onclick="toggleDropdown('profile-dropdown')">MY PROFILE</span>
+                <div id="profile-dropdown" class="TOURdropdown-menu">
+                    <a href="profile.php" class="TOURdropdown-item">My Account</a>
+                    <a href="bkstatus.php" class="TOURdropdown-item">Booking Status</a>
+                    <a href="index.php" class="TOURdropdown-item">Log Out</a>
+                </div>
+            </div>
         </nav>
     </header>
 
-    <!-- Buttons -->
-    <div class="button-container">
-        <button class="button" id="current-booking-btn">CURRENT BOOKING</button>
-        <button class="button" id="completed-btn">COMPLETED</button>
+    <div class="BKSTATUSbutton-container">
+        <button class="BKSTATUSbutton" id="current-booking-btn">CURRENT BOOKING</button>
+        <button class="BKSTATUSbutton" id="completed-btn">COMPLETED</button>
     </div>
 
-    <!-- Current Bookings Section -->
-    <div class="status-container" id="current-status">
-        <h2>Current Bookings</h2>
-        <?php
-        if ($current_result->num_rows > 0) {
-            while ($row = $current_result->fetch_assoc()) {
-                echo "<div class='booking-item'>";
-                echo "<p><strong>Tour Name:</strong> " . htmlspecialchars($row['tour_name']) . "</p>";
-                echo "<p><strong>Booking Date:</strong> " . htmlspecialchars($row['booking_date']) . "</p>";
-                echo "</div>";
-            }
-        } else {
-            echo "<p>No current bookings found.</p>";
-        }
-        ?>
+    <div class="BKSTATUSstatus-container" id="status-container">
+        <?php if (count($bookings) > 0): ?>
+            <ul class="booking-list">
+                <?php foreach ($bookings as $booking): ?>
+                    <li class="booking-item">
+                        <a href="tour_details.php?booking_id=<?php echo $booking['booking_id']; ?>" class="booking-link">
+                            <div class="booking-info">
+                                <!-- Display "You booked" before the tour name -->
+                                <span class="booking-text">You booked </span>
+                                <span class="booking-tour-name"><?php echo $booking['tour_name']; ?></span>
+                                <span class="booking-text"> on </span>
+                                <span class="booking-date"><?php echo date('F j, Y', strtotime($booking['booking_date'])); ?></span>
+                            </div>
+                            <span class="notification-arrow">➔</span>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php else: ?>
+            <p>You have not made any bookings yet.</p>
+        <?php endif; ?>
     </div>
 
-    <!-- Completed Bookings Section -->
-    <div class="status-container" id="completed-status">
-        <h2>Completed Bookings</h2>
-        <?php
-        if ($completed_result->num_rows > 0) {
-            while ($row = $completed_result->fetch_assoc()) {
-                echo "<div class='booking-item'>";
-                echo "<p><strong>Tour Name:</strong> " . htmlspecialchars($row['tour_name']) . "</p>";
-                echo "<p><strong>Booking Date:</strong> " . htmlspecialchars($row['booking_date']) . "</p>";
-                echo "</div>";
-            }
-        } else {
-            echo "<p>No completed bookings found.</p>";
-        }
-        ?>
-    </div>
-
-    <footer>
-        <p>&copy; 2024 Higanteng Laagan Travel & Tours</p>
+    <footer id="about-us-footer">
+        <div class="TOURfooterContainer">
+            <div class="TOURsocialIcons">
+                <a href=""><i class="fa-brands fa-facebook"></i></a>
+                <a href=""><i class="fa-brands fa-instagram"></i></a>
+                <a href=""><i class="fa-brands fa-twitter"></i></a>
+                <a href=""><i class="fa-brands fa-youtube"></i></a>
+            </div>
+            <div class="TOURfooterNav">
+                <ul>
+                    <li><a href="home.php">Home</a></li>
+                    <li><a href="">About Us</a></li>
+                    <li><a href="">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="TOURfooterBottom">
+            <p>Copyright &copy;2024; Designed by <span class="TOURdesigner">CASSanga</span></p>
+        </div>
     </footer>
-</body>
-</html>
 
-<?php
-// Close the database connections
-$stmt_current->close();
-$stmt_completed->close();
-$conn->close();
-?>
+    <script>
+        function toggleDropdown(menuId) {
+            const dropdown = document.getElementById(menuId);
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Close dropdown if clicked outside
+        window.onclick = function (event) {
+            if (!event.target.matches('.dropdown-toggle')) {
+                const dropdowns = document.querySelectorAll('.dropdown-menu');
+                dropdowns.forEach(dropdown => {
+                    dropdown.style.display = 'none';
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>

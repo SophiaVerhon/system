@@ -1,9 +1,12 @@
 <?php
-session_start();
+
 include('../db_connect.php'); 
 $currency_symbol = "₱";
-
-// Fetch most popular tours
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location:login.php");
+    exit();
+}
 $sql = "
     SELECT t.tour_id, t.tour_name, t.image_path, t.price_per_person, t.max_bookings, COUNT(b.booking_id) AS booking_count
     FROM tour t
@@ -20,7 +23,6 @@ if ($result && $result->num_rows > 0) {
     $popular_tours = $result->fetch_all(MYSQLI_ASSOC);
 }
 
-// Fetch upcoming tours
 $upcoming_query = "
     SELECT t.tour_id, t.tour_name, t.description, t.start_date, t.end_date, t.price_per_person, t.location, t.image_path, t.max_bookings, COUNT(b.booking_id) AS booking_count 
     FROM tour t
@@ -38,6 +40,7 @@ $upcoming_result = $conn->query($upcoming_query);
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   
     <link rel="stylesheet" href="style1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>USERhomepage</title>
@@ -68,217 +71,244 @@ $upcoming_result = $conn->query($upcoming_query);
         <div class="gaptop">
             <p><br></p>
         </div>
-
-        <!-- Popular Tours Section -->
         <section id="popular" class="tours-section2">
-            <div class="section-header">
-                <div class="left-header">
-                    <p class="section-title">MOST POPULAR TOURS</p>
-                </div>
-            </div>
-            <div class="scroll-container">
-                <?php if (!empty($popular_tours)): ?>
-                    <?php foreach ($popular_tours as $tour): ?>
-                        <?php
-                        // Check if max_booking is NULL or 0
-                        if ($tour['max_bookings'] == 0 || is_null($tour['max_bookings'])) {
-                            $available_slots = 'Open Slots';  // Display "Open Slots" if no booking limit is set
-                            $is_bookable = true;
-                        } else {
-                            $available_slots = $tour['max_bookings'] - $tour['booking_count'];
-                            $is_bookable = ($available_slots > 0);
-                            $available_slots = ($available_slots > 0) ? $available_slots : 'No available slots';
-                        }
-                        ?>
-                        <div class="rectangle" onclick="window.location.href='../tour_details.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>'">
-                            <div class="image-container">
-                                <?php
-                                // Output image from BLOB
-                                if (!empty($tour['image_path'])):
-                                    echo '<img src="data:image/jpeg;base64,' . base64_encode($tour['image_path']) . '" alt="' . htmlspecialchars($tour['tour_name']) . '" class="tour-image">';
-                                else:
-                                    echo "<p>Image not available</p>";
-                                endif;
-                                ?>
-                            </div>
-                            <div class="tour-details">
-                                <p class="tour-title2"><?php echo htmlspecialchars($tour['tour_name']); ?></p>
-                                <p><?php echo $currency_symbol . htmlspecialchars($tour['price_per_person']); ?> per person</p>
-                                <p><strong>Available Slots: <?php echo $available_slots; ?></strong></p>
-                            </div>
-                            <?php if ($is_bookable): ?>
-                                <a href="../customer_form.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>" class="tour-button book-now-button">Book Now</a>
-                            <?php else: ?>
-                                <a href="#" class="tour-button book-now-button" disabled>Fully Booked</a>
-                            <?php endif; ?>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>No popular tours available at the moment.</p>
-                <?php endif; ?>
-            </div>
-        </section>
-
-        <!-- Upcom Tours Section -->
-        <section id="upcoming" class="tours-section2">
-            <div class="section-header">
-                <div class="left-header">
-                    <p class="section-title">UPCOMING TOURS</p>
-                </div>
-            </div>
-            <div class="scroll-container">
-                <?php if ($upcoming_result->num_rows > 0): ?>
-                    <?php while ($tour = $upcoming_result->fetch_assoc()): ?>
-                        <?php
-                        // Check if max_booking is NULL or 0
-                        if ($tour['max_bookings'] == 0 || is_null($tour['max_bookings'])) {
-                            $available_slots = 'Open Slots';  // Display "Open Slots" if no booking limit is set
-                        } else {
-                            $available_slots = $tour['max_bookings'] - $tour['booking_count'];
-                            $available_slots = ($available_slots > 0) ? $available_slots : 'No available slots';
-                        }
-                        ?>
-                        <div class="rectangle" onclick="window.location.href='../tour_details.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>'">
-                            <div class="image-container">
-                                <?php
-                                // Output image from BLOB
-                                if (!empty($tour['image_path'])):
-                                    echo '<img src="data:image/jpeg;base64,' . base64_encode($tour['image_path']) . '" alt="' . htmlspecialchars($tour['tour_name']) . '" class="tour-image">';
-                                else:
-                                    echo "<p>Image not available</p>";
-                                endif;
-                                ?>
-                            </div>
-                            <div class="tour-details">
-                                <p class="tour-title2"><?php echo htmlspecialchars($tour['tour_name']); ?></p>
-                                <p><?php echo $currency_symbol . htmlspecialchars($tour['price_per_person']); ?> per person</p>
-                                <p><strong>Available Slots: <?php echo $available_slots; ?></strong></p>
-                            </div>
-                            
-                            <?php if ($is_bookable): ?>
-                                <a href="../customer_form.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>" class="tour-button book-now-button">Book Now</a>
-                            <?php else: ?>
-                                <a href="#" class="tour-button book-now-button" disabled>Fully Booked</a>
-                            <?php endif; ?>
-                        </div>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <p>No upcoming tours available at the moment.</p>
-                <?php endif; ?>
-            </div>
-        </section>
-        <section id="popular" class="tours-section2">
-            <div class="section-header">
-                <div class="left-header">
-                    <p class="section-title">EXCLUSIVE TOURS</p>
-                </div>
-            </div>
-            <div class="scroll-container">
-                <?php if (!empty($popular_tours)): ?>
-                    <?php foreach ($popular_tours as $tour): ?>
-                        <?php
-                        // Check if max_booking is NULL or 0
-                        if ($tour['max_bookings'] == 0 || is_null($tour['max_bookings'])) {
-                            $available_slots = 'Open Slots';  // Display "Open Slots" if no booking limit is set
-                        } else {
-                            $available_slots = $tour['max_bookings'] - $tour['booking_count'];
-                            $available_slots = ($available_slots > 0) ? $available_slots : 'No available slots';
-                        }
-                        ?>
-                        <div class="rectangle" onclick="window.location.href='../tour_details.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>'">
-                            <div class="image-container">
-                                <?php
-                                // Output image from BLOB
-                                if (!empty($tour['image_path'])):
-                                    echo '<img src="data:image/jpeg;base64,' . base64_encode($tour['image_path']) . '" alt="' . htmlspecialchars($tour['tour_name']) . '" class="tour-image">';
-                                else:
-                                    echo "<p>Image not available</p>";
-                                endif;
-                                ?>
-                            </div>
-                            <div class="tour-details">
-                                <p class="tour-title2"><?php echo htmlspecialchars($tour['tour_name']); ?></p>
-                                <p><?php echo $currency_symbol . htmlspecialchars($tour['price_per_person']); ?> per person</p>
-                                <p><strong>Available Slots: <?php echo $available_slots; ?></strong></p>
-                            </div>
-                            <a href="../customer_form.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>" class="tour-button">Book Now</a>
-                        </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>No popular tours available at the moment.</p>
-                <?php endif; ?>
-            </div>
-        </section>
-
-
-        <!-- All Upcoming Tours Section -->
-        <section id="tours" class="tours-section2">
-            <div class="section-header">
-                <div class="left-header">
-                    <p class="section-title">ALL TOURS</p>
-                </div>
-                <div class="search-wrapper">
-                    <div class="search-container">
-                        <input type="text" class="search-input" placeholder="Search...">
-                        <button class="search-button">
-                            <img src="image/searchicon.png" alt="Search" class="search-icon">
-                        </button>
-                        <div class="filter-buttons">
-                            <button class="filter-button" data-category="all">All Tours</button>
-                            <button class="filter-button" data-category="minor-hike">Minor Dayhike</button>
-                            <button class="filter-button" data-category="major-hike">Major Dayhike</button>
-                            <button class="filter-button" data-category="trekking">Trekking</button>
-                            <button class="filter-button" data-category="overnight">Overnight</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="scroll-container">
-                <?php
-                $allToursQuery = "
-                    SELECT t.tour_id, t.tour_name, t.image_path, t.price_per_person, t.max_bookings, COUNT(b.booking_id) AS booking_count
-                        FROM tour t
-                         LEFT JOIN booking b ON t.tour_id = b.tour_id
-                            WHERE t.start_date > NOW()  -- Only upcoming tours
-                             GROUP BY t.tour_id
-                                ORDER BY t.start_date ASC";
-                $allToursResult = $conn->query($allToursQuery);
-
-                if ($allToursResult->num_rows > 0):
-                    while ($tour = $allToursResult->fetch_assoc()):
-                        // Check if max_booking is NULL or 0
-                        if ($tour['max_bookings'] == 0 || is_null($tour['max_bookings'])) {
-                            $available_slots = 'Open Slots';  // Display "Open Slots" if no booking limit is set
-                        } else {
-                            $available_slots = $tour['max_bookings'] - $tour['booking_count'];
-                            $available_slots = ($available_slots > 0) ? $available_slots : 'No available slots';
-                        }
-                        ?>
-                        <div class="rectangle" onclick="window.location.href='../tour_details.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>'">
-                            <div class="image-container">
-                                <?php
-                                // Output image from BLOB
-                                if (!empty($tour['image_path'])):
-                                    echo '<img src="data:image/jpeg;base64,' . base64_encode($tour['image_path']) . '" alt="' . htmlspecialchars($tour['tour_name']) . '" class="tour-image">';
-                                else:
-                                    echo "<p>Image not available</p>";
-                                endif;
-                                ?>
-                            </div>
-                            <div class="tour-details">
-                                <p class="tour-title2"><?php echo htmlspecialchars($tour['tour_name']); ?></p>
-                                <p><?php echo $currency_symbol . htmlspecialchars($tour['price_per_person']); ?> per person</p>
-                                <p><strong>Available Slots: <?php echo $available_slots; ?></strong></p>
-                            </div>
-                            <a href="../customer_form.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>" class="tour-button">Book Now</a>
-                        </div>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <p>No tours available.</p>
-                <?php endif; ?>
-            </div>
-        </section>
+    <div class="section-header">
+        <div class="left-header">
+            <p class="section-title">MOST POPULAR TOURS</p>
+        </div>
     </div>
+    <div class="scroll-container">
+        <?php if (!empty($popular_tours)): ?>
+            <?php foreach ($popular_tours as $tour): ?>
+                <?php
+                // Adjust the logic for open slots and booking conditions
+                if ($tour['max_bookings'] == 0 || is_null($tour['max_bookings'])) {
+                    $available_slots = 'Open Slots';  // Display "Open Slots" if no booking limit is set
+                    $is_bookable = true;  // Allow booking when no limit is set (open slots)
+                } else {
+                    $available_slots = $tour['max_bookings'] - $tour['booking_count'];
+                    $is_bookable = ($available_slots > 0);  // Only allow booking if available slots > 0
+                    $available_slots = ($available_slots > 0) ? $available_slots : 'No available slots';
+                }
+                ?>
+                <div class="rectangle" onclick="window.location.href='../tour_details.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>'">
+                    <div class="image-container">
+                        <?php
+                        // Output image from BLOB
+                        if (!empty($tour['image_path'])):
+                            echo '<img src="data:image/jpeg;base64,' . base64_encode($tour['image_path']) . '" alt="' . htmlspecialchars($tour['tour_name']) . '" class="tour-image">';
+                        else:
+                            echo "<p>Image not available</p>";
+                        endif;
+                        ?>
+                    </div>
+                    <div class="tour-details">
+                        <p class="tour-title2"><?php echo htmlspecialchars($tour['tour_name']); ?></p>
+                        <p><?php echo $currency_symbol . htmlspecialchars($tour['price_per_person']); ?> per person</p>
+                        <p><strong>Available Slots: <?php echo $available_slots; ?></strong></p>
+                    </div>
+                    <?php if ($is_bookable): ?>
+                        <a href="../customer_form.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>" class="tour-button book-now-button">Book Now</a>
+                    <?php else: ?>
+                        <a href="#" class="tour-button book-now-button" disabled>Fully Booked</a>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No popular tours available at the moment.</p>
+        <?php endif; ?>
+    </div>
+</section>
+
+        <section id="upcoming" class="tours-section2">
+    <div class="section-header">
+        <div class="left-header">
+            <p class="section-title">UPCOMING TOURS</p>
+        </div>
+    </div>
+    <div class="scroll-container">
+        <?php if ($upcoming_result->num_rows > 0): ?>
+            <?php while ($tour = $upcoming_result->fetch_assoc()): ?>
+                <?php
+                if ($tour['max_bookings'] == 0 || is_null($tour['max_bookings'])) {
+                    $available_slots = 'Open Slots';  // Display "Open Slots" if no booking limit is set
+                    $is_bookable = true; // Always bookable if no limit
+                } else {
+                    $available_slots = $tour['max_bookings'] - $tour['booking_count'];
+                    $is_bookable = ($available_slots > 0); // Check if slots are available
+                    $available_slots = ($available_slots > 0) ? $available_slots : 'No available slots';
+                }
+                ?>
+                <div class="rectangle" onclick="window.location.href='../tour_details.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>'">
+                    <div class="image-container">
+                        <?php
+                        // Output image from BLOB
+                        if (!empty($tour['image_path'])):
+                            echo '<img src="data:image/jpeg;base64,' . base64_encode($tour['image_path']) . '" alt="' . htmlspecialchars($tour['tour_name']) . '" class="tour-image">';
+                        else:
+                            echo "<p>Image not available</p>";
+                        endif;
+                        ?>
+                    </div>
+                    <div class="tour-details">
+                        <p class="tour-title2"><?php echo htmlspecialchars($tour['tour_name']); ?></p>
+                        <p><?php echo $currency_symbol . htmlspecialchars($tour['price_per_person']); ?> per person</p>
+                        <p><strong>Available Slots: <?php echo $available_slots; ?></strong></p>
+                    </div>
+                    
+                    <?php if ($is_bookable): ?>
+                        <a href="../customer_form.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>" class="tour-button book-now-button">Book Now</a>
+                    <?php else: ?>
+                        <a href="#" class="tour-button book-now-button" disabled>Fully Booked</a>
+                    <?php endif; ?>
+                </div>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <p>No upcoming tours available at the moment.</p>
+        <?php endif; ?>
+    </div>
+    <section id="upcoming" class="tours-section2">
+    <div class="section-header">
+        <div class="left-header">
+            <p class="section-title">EXCLUSIVE TOURS</p>
+        </div>
+    </div>
+    <div class="scroll-container">
+        <?php
+        $exclusive_query = "
+            SELECT t.tour_id, t.tour_name, t.description, t.start_date, t.end_date, 
+                   t.price_per_person, t.location, t.image_path, t.max_bookings, t.min_bookings,
+                   COUNT(b.booking_id) AS booking_count 
+            FROM tour t
+            LEFT JOIN booking b ON t.tour_id = b.tour_id
+            WHERE t.is_exclusive = 1  -- Fetch only exclusive tours
+            GROUP BY t.tour_id
+            ORDER BY t.start_date ASC";
+
+        $exclusive_result = $conn->query($exclusive_query);
+        $exclusive_tours = [];
+
+        if ($exclusive_result && $exclusive_result->num_rows > 0) {
+            while ($tour = $exclusive_result->fetch_assoc()) {
+                $exclusive_tours[] = $tour;
+            }
+        }
+        ?>
+
+        <?php if (!empty($exclusive_tours)): ?>
+            <?php foreach ($exclusive_tours as $tour): ?>
+                <div class="rectangle" onclick="window.location.href='../tour_details.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>'">
+                    <div class="image-container">
+                        <?php
+                        if (!empty($tour['image_path'])):
+                            echo '<img src="data:image/jpeg;base64,' . base64_encode($tour['image_path']) . '" alt="' . htmlspecialchars($tour['tour_name']) . '" class="tour-image">';
+                        else:
+                            echo "<p>Image not available</p>";
+                        endif;
+                        ?>
+                    </div>
+                    <div class="tour-details">
+                        <p class="tour-title2"><?php echo htmlspecialchars($tour['tour_name']); ?></p>
+                        <p><?php echo $currency_symbol . htmlspecialchars($tour['price_per_person']); ?> per person</p>
+
+                        <!-- Display the minimum bookings and available slots -->
+                        <p><strong>Minimum Bookings: </strong><?php echo htmlspecialchars($tour['min_bookings']); ?></p>
+                        <?php
+                        // If max_bookings is 0 or NULL, display "Open Slot" instead of available slots
+                        if ($tour['max_bookings'] == 0 || is_null($tour['max_bookings'])):
+                            echo '<p><strong>Available Slots: </strong>Open Slot</p>';
+                        else:
+                            echo '<p><strong>Available Slots: </strong>' . max(0, $tour['max_bookings'] - $tour['booking_count']) . ' slots left</p>';
+                        endif;
+                        ?>
+                    </div>
+
+                    <!-- Always show Book Now button for exclusive tours, no fully booked check -->
+                    <a href="../customer_form.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>" class="tour-button">Book Now</a>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No exclusive tours available at the moment.</p>
+        <?php endif; ?>
+    </div>
+</section>
+
+
+
+
+<section id="tours" class="tours-section2">
+    <div class="section-header">
+        <div class="left-header">
+            <p class="section-title">ALL TOURS</p>
+        </div>
+        <div class="search-wrapper">
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search...">
+                <button class="search-button">
+                    <img src="image/searchicon.png" alt="Search" class="search-icon">
+                </button>
+                <div class="filter-buttons">
+                    <button class="filter-button" data-category="all">All Tours</button>
+                    <button class="filter-button" data-category="minor-hike">Minor Dayhike</button>
+                    <button class="filter-button" data-category="major-hike">Major Dayhike</button>
+                    <button class="filter-button" data-category="trekking">Trekking</button>
+                    <button class="filter-button" data-category="overnight">Overnight</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="scroll-container">
+        <?php
+        $allToursQuery = "
+            SELECT t.tour_id, t.tour_name, t.image_path, t.price_per_person, t.max_bookings, COUNT(b.booking_id) AS booking_count
+            FROM tour t
+            LEFT JOIN booking b ON t.tour_id = b.tour_id
+            WHERE t.start_date > NOW()  -- Only upcoming tours
+            GROUP BY t.tour_id
+            ORDER BY t.start_date ASC";
+        $allToursResult = $conn->query($allToursQuery);
+
+        if ($allToursResult->num_rows > 0):
+            while ($tour = $allToursResult->fetch_assoc()):
+                // Determine available slots and bookability
+                if ($tour['max_bookings'] == 0 || is_null($tour['max_bookings'])) {
+                    $available_slots = 'Open Slots';  // Display "Open Slots" if no booking limit is set
+                    $is_bookable = true; // Always bookable if no limit
+                } else {
+                    $available_slots = $tour['max_bookings'] - $tour['booking_count'];
+                    $is_bookable = ($available_slots > 0); // Check if slots are available
+                    $available_slots = ($available_slots > 0) ? $available_slots : 'No available slots';
+                }
+                ?>
+                <div class="rectangle" onclick="window.location.href='../tour_details.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>'">
+                    <div class="image-container">
+                        <?php
+                        // Output image from BLOB
+                        if (!empty($tour['image_path'])):
+                            echo '<img src="data:image/jpeg;base64,' . base64_encode($tour['image_path']) . '" alt="' . htmlspecialchars($tour['tour_name']) . '" class="tour-image">';
+                        else:
+                            echo "<p>Image not available</p>";
+                        endif;
+                        ?>
+                    </div>
+                    <div class="tour-details">
+                        <p class="tour-title2"><?php echo htmlspecialchars($tour['tour_name']); ?></p>
+                        <p><?php echo $currency_symbol . htmlspecialchars($tour['price_per_person']); ?> per person</p>
+                        <p><strong>Available Slots: <?php echo $available_slots; ?></strong></p>
+                    </div>
+                    <?php if ($is_bookable): ?>
+                        <a href="../customer_form.php?tour_id=<?php echo htmlspecialchars($tour['tour_id']); ?>" class="tour-button book-now-button">Book Now</a>
+                    <?php else: ?>
+                        <a href="#" class="tour-button book-now-button" disabled>Fully Booked</a>
+                    <?php endif; ?>
+                </div>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <p>No tours available.</p>
+        <?php endif; ?>
+    </div>
+</section>
+
 
         <footer id="about-us-footer">
             <div class="footerContainer">
@@ -291,7 +321,7 @@ $upcoming_result = $conn->query($upcoming_query);
                 <div class="footerNav">
                     <ul><li><a href="">Home</a></li>
                         <li><a href="aboutus.php">About Us</a></li>
-                        <li><a href="">Contact</a></li>
+                        <li><a href="contact.php">Contact</a></li>
                     </ul>
                 </div>
             </div>

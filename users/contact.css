@@ -1,0 +1,336 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* General Body Styling */
+body {
+    background: #f9f9f9;
+    color: #333;
+}
+
+/* Contact Container */
+.contact-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    justify-content: space-between;
+}
+
+/* Left Form Section */
+.contact-left {
+    background-color: #ffffff; /* White background */
+    padding: 40px; /* Added padding for spacing */
+    margin-left: 50px; /* Added margin from the left */
+    width: 50%; /* Takes half the screen */
+    margin-right: 80px;
+}
+
+.contact-left-title h2 {
+    font-weight: 600;
+    color: #1E5F2D; /* Matches the green */
+    font-size: 40px;
+}
+
+.contact-inputs {
+    width: 100%; /* Responsive width */
+    height: 50px;
+    border: 2px solid #1E5F2D; /* Green border */
+    outline: none;
+    padding-left: 25px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 20px;
+    border-radius: 50px;
+}
+
+.contact-left textarea {
+    height: 140px;
+    padding-top: 15px;
+    border-radius: 20px;
+    border: 2px solid #1E5F2D; /* Green border */
+}
+
+.contact-submit {
+    background: #1E5F2D; /* Green background */
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.contact-submit:hover {
+    background: #EE5023; 
+}
+
+/* Right Image Section */
+.contact-right {
+    background-color: #a9d19b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 100%;
+    padding: 20px;
+}
+
+/* Right Image Section */
+.contact-right {
+    background-color: #a9d19b; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    height: 100%;
+    padding: 20px;
+}
+
+.contact-right img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Dropdown Menu */
+.TOURdropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #1E5F2D;
+    color: white;
+    border: 1px solid #154a21;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    padding: 10px 0;
+    min-width: 200px;
+}
+
+.TOURdropdown-menu.show {
+    display: block;
+}
+
+.TOURdropdown-item {
+    padding: 10px 20px;
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.TOURdropdown-item:hover {
+    background-color: #EE5023; /* Orange hover effect */
+}
+
+/* Responsive Design */
+@media (max-width: 800px) {
+    .contact-inputs {
+        width: 80vw;
+    }
+    .contact-right {
+        display: none; /* Hide image section for small screens */
+    }
+}
+
+
+/* Responsive Design */
+@media (max-width: 800px) {
+    /* Adjust font sizes and spacing for smaller screens */
+    .TOURheader-text {
+        font-size: 1.1em;
+    }
+
+    .TOURlogo-image {
+        width: 40px;
+        height: 40px;
+    }
+
+    .contact-left {
+        padding: 15px;
+        margin: 5px;
+    }
+
+    .contact-left-title h2 {
+        font-size: 1.5em;
+    }
+
+    .contact-inputs {
+        height: 40px;
+        margin-bottom: 10px;
+    }
+
+    .contact-left textarea {
+        height: 80px;
+    }
+
+    .contact-submit {
+        padding: 10px 20px;
+    }
+
+    .contact-right img {
+        max-width: 90%;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Further adjustments for very small screens */
+    .TOURheader-text {
+        font-size: 1em;
+    }
+
+    .TOURnav-linkHP {
+        font-size: 0.9em;
+        padding: 5px 10px;
+    }
+
+    .contact-left-title h2 {
+        font-size: 1.2em;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+.TOURmain-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    padding: 20px 20px; 
+    background-color: #1E5F2D;
+    color: white;
+    height: 130px;
+    position: fixed;
+    top: 0; 
+    width: 100%; 
+    z-index: 1000;
+    box-shadow: 0px 25px 20px rgba(0, 0, 0, 0.3); 
+}
+
+.TOURheader-logo-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 10px;
+}
+
+.TOURheader-text {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.TOURlogo-image {
+    margin-top: 5px; 
+    margin-bottom: 0;
+    width: 60px;
+    height: 60px;
+}
+
+.TOURheader-navHP {
+    display: flex;
+    gap: 30px; 
+    margin-top: 50px;
+    align-items: center;
+}
+
+.TOURnav-linkHP {
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 10px 15px;
+    font-size: 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.TOURnav-linkHP:hover,
+.TOURnav-linkHP:active {
+    background-color: #EE5023;
+    color: white;
+}
+
+.TOURdropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.TOURdropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    background-color: #1E5F2D;
+    color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 1000;
+    padding: 10px 0;
+    min-width: 200px;
+}
+
+.TOURdropdown-menu.show {
+    display: block;
+}
+
+.TOURdropdown-item {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.TOURdropdown-item:hover {
+    background-color: #1E5F2D;
+    color: #ffffff;
+}
+
+.TOURheader-nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.TOURnav-link.dropdown {
+    cursor: pointer;
+}
+
+.TOURdropdown-menu a {
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+}
+
+.TOURdropdown-menu a:hover {
+    background-color: #154a21;
+}
+
+.TOURdropdown:hover .dropdown-menu {
+    display: block; 
+}
+
+.TOURdropdown-toggle {
+    font-weight: bold;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+}
