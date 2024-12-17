@@ -1,0 +1,229 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.gaptop {
+    font-size: 3px;
+    background-color: white;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #e4e9f7;
+    overflow-x: hidden; 
+    color: #333; 
+}
+
+body.index {
+    background: #e4e9f7;
+    overflow-x: hidden; 
+    color: #333;
+    padding-top: 150px; 
+}
+
+body.admin {
+    background: #e4e9f7;
+    overflow-x: hidden; 
+    color: #333;
+    padding-top: 150px; 
+}
+
+/* Main container */
+.main-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Header */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    padding: 20px 20px; 
+    background-color: #1E5F2D;
+    color: white;
+    height: 130px;
+    position: fixed;
+    top: 0; 
+    width: 100%; 
+    z-index: 1000;
+    box-shadow: 0px 25px 20px rgba(0, 0, 0, 0.3); 
+}
+
+.header-logo-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 10px;
+}
+
+.header-text {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.logo-image {
+    margin-top: 5px; 
+    margin-bottom: 0;
+    width: 60px;
+    height: 60px;
+}
+
+.header-navHP {
+    display: flex;
+    gap: 30px; 
+    margin-top: 50px;
+    align-items: center;
+}
+
+.nav-linkHP {
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 10px 15px;
+    font-size: 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.nav-linkHP:hover,
+.nav-linkHP:active {
+    background-color: #EE5023;
+    color: white;
+}
+
+
+.logout-button {
+    background-color: #e53935;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+}
+
+.logout-button:hover {
+    background-color: #c62828;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container h2 {
+    text-align: center;
+    color: #1E5F2D;
+    margin-bottom: 20px;
+}
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.dashboard-card,
+.total-tours-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.dashboard-card h3,
+.total-tours-card h3 {
+    color: #1E5F2D;
+    margin-bottom: 10px;
+}
+
+.dashboard-card p,
+.total-tours-card p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.dashboard-card a {
+    text-decoration: none;
+    font-size: 14px;
+    color: #fff;
+    background-color: #1E5F2D;
+    padding: 8px 15px;
+    border-radius: 5px;
+    display: inline-block;
+    transition: background-color 0.3s;
+}
+
+.dashboard-card a:hover {
+    background-color: #14401d;
+}
+
+.dashboard-card:hover,
+.total-tours-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+}
+.notification-badge-top {
+    text-align: center;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.notification-badge-top .badge {
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 8px;
+    font-size: 14px;
+}
+
+.notification-badge {
+    position: relative;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.notification-badge .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 5px;
+    font-size: 12px;
+}
+
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .dashboard-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-card {
+        margin-bottom: 20px;
+    }
+}

@@ -1,0 +1,119 @@
+/* General Body Styling */
+/* General reset for padding, margin, and box-sizing */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body style */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0fff0;
+    color: #003300;
+}
+
+/* Back button style */
+.back-button {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.back-button a {
+    color: #ffffff;
+    background-color: #006600;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.back-button a:hover {
+    background-color: #004d00;
+}
+
+/* Container style */
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Heading */
+h1 {
+    color: #004d00;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+/* Table container for bookings */
+.table-container {
+    margin-top: 20px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    background-color: #006600;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+}
+
+.table-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    background-color: #f9f9f9;
+    text-align: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.table-row:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.table-column {
+    padding: 10px;
+}
+
+/* Valid ID image styling */
+.valid-id-img {
+    max-width: 80px;
+    max-height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* No bookings message */
+.no-bookings {
+    font-size: 16px;
+    color: #777;
+    margin-top: 20px;
+}
+
+
+
+@media (max-width: 600px) {
+    .booking-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .valid-id {
+        margin-top: 10px;
+    }
+
+    .valid-id-img {
+        width: 100%; /* Adapt image size for smaller screens */
+    }
+}

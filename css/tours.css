@@ -1,0 +1,464 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.TOURimage-container {
+    margin-top: 110px;
+    height: 300px;
+    width: 100%;
+    overflow: hidden; /* Ensures image doesn't exceed container */
+    position: relative; /* Ensure the container is positioned properly */
+}
+
+.TOURimage-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Adjust this to 'contain' instead of 'cover' to avoid zooming */
+    object-position: center; /* Center the image inside the container */
+}
+
+.TOURtext-container {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.TOURsection-title {
+    font-size: 50px;
+    text-align: center;
+    margin: 20px 0; /* Ensure proper spacing above and below the title */
+    color: #154a21;
+}
+
+.TOURdiv-title {
+    color: #154a21;
+    font-size: 30px;
+    margin-top: 20px; /* Add margin to space out sections */
+    margin-bottom: 10px; /* Give some space after section title */
+}
+
+.TOURtext-container p {
+    margin-bottom: 20px; /* Add margin after paragraphs to avoid content getting too close */
+}
+
+ul {
+    margin-left: 20px; /* Ensure list items are indented */
+    margin-bottom: 20px; /* Add space after the list */
+}
+
+ul li {
+    margin-bottom: 5px; /* Space between list items */
+}
+
+.TOURtext-container h2 {
+    margin-top: 30px; /* Ensure title spacing above each section */
+}
+
+.TOURtext-container .price-area {
+    margin-top: 20px; /* Adjust price section spacing */
+}
+
+/* Specific changes for trek itinerary, inclusions, exclusions, cancellation policy */
+.TOURtext-container ul li {
+    line-height: 1.8; /* Make the list items more readable with spacing between lines */
+}
+
+.tour-rectangle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.price-area {
+    margin-right: 10px;
+}
+
+.price {
+    font-size: 40px;
+    font-weight: bold;
+    color: #154a21;
+}
+
+.orangebutton-container .orange-button {
+    background-color: #FF3700;
+    color: white;
+    font-size: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.orangebutton-container .orange-button:hover {
+    background-color: #154a21;
+}
+
+.TOURmain-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    padding: 20px 20px; 
+    background-color: #1E5F2D;
+    color: white;
+    height: 130px;
+    position: fixed;
+    top: 0; 
+    width: 100%; 
+    z-index: 1000;
+    box-shadow: 0px 25px 20px rgba(0, 0, 0, 0.3); 
+}
+
+.TOURheader-logo-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 10px;
+}
+
+.TOURheader-text {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.TOURlogo-image {
+    margin-top: 5px; 
+    margin-bottom: 0;
+    width: 60px;
+    height: 60px;
+}
+
+.TOURheader-navHP {
+    display: flex;
+    gap: 30px; 
+    margin-top: 50px;
+    align-items: center;
+}
+
+.TOURnav-linkHP {
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 10px 15px;
+    font-size: 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.TOURnav-linkHP:hover,
+.TOURnav-linkHP:active {
+    background-color: #EE5023;
+    color: white;
+}
+
+.TOURfooterContainer {
+    width: 100%;
+    padding: 70px 30px 20px ;
+    background-color: #1E5F2D;
+}
+
+.TOURsocialIcons {
+    display: flex;
+    justify-content: center;
+}
+
+.TOURsocialIcons a {
+    text-decoration: none;
+    padding: 10px;
+    background-color: rgb(255, 255, 255);
+    margin: 10px;
+    border-radius: 100%;
+}
+
+.TOURsocialIcons a i {
+    font-size: 2em;
+    color: #1E5F2D;
+}
+
+.TOURsocialIcons a:hover {
+    background-color: #ff3700;
+    transition: 0.5s;
+}
+
+.TOURfooterBottom {
+    background-color: #1E5F2D;
+    padding: 20px;
+    text-align: center;
+}
+
+.TOURfooterBottom p {
+    color: rgb(255, 255, 255);
+}
+
+@media (max-width: 480px) {
+    .TOURheader-text {
+        font-size: 15px; 
+    }
+    .TOURheader-navHP {
+        gap: 15px; /* Adjust spacing between navigation links */
+    }
+    .TOURnav-linkHP {
+        font-size: 13px; /* Smaller font size for nav links */
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.TOURmain-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    padding: 20px 20px; 
+    background-color: #1E5F2D;
+    color: white;
+    height: 130px;
+    position: fixed;
+    top: 0; 
+    width: 100%; 
+    z-index: 1000;
+    box-shadow: 0px 25px 20px rgba(0, 0, 0, 0.3); 
+}
+
+.TOURheader-logo-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 10px;
+}
+
+.TOURheader-text {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.TOURlogo-image {
+    margin-top: 5px; 
+    margin-bottom: 0;
+    width: 60px;
+    height: 60px;
+}
+
+.TOURheader-navHP {
+    display: flex;
+    gap: 30px; 
+    margin-top: 50px;
+    align-items: center;
+}
+
+.TOURnav-linkHP {
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: bold;
+    padding: 10px 15px;
+    font-size: 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.TOURnav-linkHP:hover,
+.TOURnav-linkHP:active {
+    background-color: #EE5023;
+    color: white;
+}
+
+.TOURdropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.TOURdropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    background-color: #1E5F2D;
+    color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 1000;
+    padding: 10px 0;
+    min-width: 200px;
+}
+
+.TOURdropdown-menu.show {
+    display: block;
+}
+
+.TOURdropdown-item {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.TOURdropdown-item:hover {
+    background-color: #1E5F2D;
+    color: #ffffff;
+}
+
+.TOURheader-nav {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.TOURnav-link.dropdown {
+    cursor: pointer;
+}
+
+.TOURdropdown-menu a {
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+}
+
+.TOURdropdown-menu a:hover {
+    background-color: #154a21;
+}
+
+.TOURdropdown:hover .dropdown-menu {
+    display: block; 
+}
+
+.TOURdropdown-toggle {
+    font-weight: bold;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+
+
+.TOURfooter{
+    background-color: #1E5F2D;
+}
+.TOURfooterContainer{
+    width: 100%;
+    padding: 70px 30px 20px ;
+    background-color: #1E5F2D;
+}
+.TOURsocialIcons{
+    display: flex;
+    justify-content: center;
+}
+.TOURsocialIcons a{
+    text-decoration: none;
+    padding:  10px;
+    background-color: rgb(255, 255, 255);
+    margin: 10px;
+    border-radius: 100%;
+}
+.TOURsocialIcons a i{
+    font-size: 2em;
+    color: #1E5F2D;
+    opacity: 1;
+}
+
+.TOURsocialIcons a:hover{
+    background-color: #ff3700;
+    transition: 0.5s;
+}
+.TOURsocialIcons a:hover i{
+    color: #ff3700;
+    transition: 0.5s;
+}
+.TOURfooterNav{
+    margin: 30px 0;
+}
+.TOURfooterNav ul{
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+}
+.TOURfooterNav ul li a{
+    color: #ffffff;
+    margin: 20px;
+    text-decoration: none;
+    font-size: 1.3em;
+    opacity: 1;
+    transition: 0.5s;
+}
+.TOURfooterNav ul li a:hover{
+    opacity: 1;
+    color: #ff3700;
+}
+.TOURfooterBottom{
+    background-color: #1E5F2D;
+    padding: 20px;
+    text-align: center;
+}
+.TOURfooterBottom p{
+    color: rgb(255, 255, 255);
+}
+.TOURdesigner{
+    opacity: 1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 400;
+    font-size: 20px;
+    color: #ffffff;
+    margin: 0px 5px;
+}
+
+
+@media (max-width: 480px) {
+    .TOURheader-text {
+        font-size: 15px; 
+    }
+    .TOURheader-navHP {
+        gap: 15px; /* Adjust spacing between navigation links */
+    }
+    .TOURnav-linkHP {
+        font-size: 13px; /* Smaller font size for nav links */
+    }
+}
