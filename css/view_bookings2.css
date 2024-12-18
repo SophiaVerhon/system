@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+    margin-top: 70px; 
+}
+
+/* Back button style */
+.back-button {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.back-button a {
+    color: #ffffff;
+    background-color: #006600;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.back-button a:hover {
+    background-color: #004d00;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading */
+h1 {
+    color: #004d00;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+/* Table container for bookings */
+.table-container {
+    margin-top: 20px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.table-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; /* Six columns */
+    background-color: #006600;
+    color: #fff;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px;
+}
+
+/* Table rows (six columns) */
+.table-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr; /* Six columns */
+    background-color: #f9f9f9;
+    text-align: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.table-row:nth-child(even) {
+    background-color: #fafafa;
+}
+
+.table-column {
+    padding: 10px;
+}
+
+/* Valid ID and Payment Proof image styling */
+.valid-id-img, .payment-proof-img {
+    max-width: 60px; /* Reduced size */
+    max-height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* No bookings message */
+.no-bookings {
+    font-size: 16px;
+    color: #777;
+    margin-top: 20px;
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 600px) {
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr 1fr 1fr; /* Adjust layout for smaller screens */
+    }
+
+    .valid-id-img, .payment-proof-img {
+        width: 50px; /* Smaller size on mobile */
+        height: auto;
+    }
+}
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scrolling if needed */
+    background-color: rgba(0, 0, 0, 0.8); /* Black with opacity */
+}
+
+/* Modal content (image) */
+.modal-content {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 80%;
+}
+
+/* Caption text */
+#caption {
+    text-align: center;
+    color: #ccc;
+    font-size: 20px;
+    padding: 10px;
+}
+
+/* Close button (X) */
+.close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Close button on hover */
+.close:hover,
+.close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
